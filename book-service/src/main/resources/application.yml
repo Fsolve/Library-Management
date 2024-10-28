@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: book-service
+  datasource:
+    url: jdbc:mysql://mysql:3306/library_db
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 8081
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    preferIpAddress: true

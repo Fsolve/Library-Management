@@ -1,5 +1,6 @@
 package com.ensam.library.loan.service.controller;
 
+import com.ensam.library.loan.service.dto.Book;
 import com.ensam.library.loan.service.dto.LoanRequest;
 import com.ensam.library.loan.service.model.Loan;
 import com.ensam.library.loan.service.service.LoanService;
@@ -26,6 +27,19 @@ public class LoanController {
     public ResponseEntity<Loan> createLoan(@RequestBody LoanRequest request) {
         Loan loan = loanService.createLoan(request.getUserId(), request.getBookId());
         return new ResponseEntity<>(loan, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Loan>> getAllLoans() {
+        try {
+            log.info("Attempting to fetch all loans");
+            List<Loan> loans = loanService.getAllLoans();
+            log.info("Successfully retrieved {} loans", loans.size());
+            return ResponseEntity.ok(loans);
+        } catch (Exception e) {
+            log.error("Error fetching all loans", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping("/return/{loanId}")

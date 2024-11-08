@@ -65,23 +65,29 @@ services:
     networks:
       - library-network
 
-  # notification-service:
-  #   build:
-  #     context: ./notification-service
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8084:8084"
-  #   container_name: notification-service
-  #   environment:
-  #     - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/library_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-  #     - SPRING_DATASOURCE_USERNAME=root
-  #     - SPRING_DATASOURCE_PASSWORD=root
-  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-  #   depends_on:
-  #     - eureka-server
-  #     - mysql
-  #   networks:
-  #     - library-network
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    container_name: notification-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/library_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_MAIL_HOST=smtp.gmail.com
+      - SPRING_MAIL_PORT=587
+      - SPRING_MAIL_USERNAME=fatima.ezzahrae.sb.5262@gmail.com
+      - SPRING_MAIL_PASSWORD=hojznykzfrroezov
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=true
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=true
+    depends_on:
+      - eureka-server
+      - mysql
+    networks:
+      - library-network
 
   mysql:
     image: mysql:8.0

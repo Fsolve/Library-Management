@@ -1,41 +1,61 @@
 package com.ensam.library.authen.service.controller;
 
+import com.ensam.library.authen.service.dto.UserDto;
+import com.ensam.library.authen.service.dto.RegisterRequest;
 import com.ensam.library.authen.service.dto.LoginRequest;
 import com.ensam.library.authen.service.dto.LoginResponse;
 import com.ensam.library.authen.service.model.User;
 import com.ensam.library.authen.service.service.UserService;
-import lombok.extern.slf4j.Slf4j;
+import com.ensam.library.authen.service.security.JwtTokenProvider;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/users")
-@Slf4j
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
     private final UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        User registeredUser = userService.register(user);
-        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
+    public ResponseEntity<UserDto> register(@RequestBody RegisterRequest registerRequest) {
+        User registeredUser = userService.register(registerRequest);
+
+        UserDto userDto = new UserDto();
+        userDto.setId(registeredUser.getId());
+        userDto.setEmail(registeredUser.getEmail());
+        userDto.setName(registeredUser.getName());
+        return ResponseEntity.ok(userDto);
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        String token = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
-        return ResponseEntity.ok(new LoginResponse(token));
+        User authenticatedUser = userService.login(loginRequest);
+
+        String jwtToken = jwtTokenProvider.generateToken(authenticatedUser);
+
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setToken(jwtToken);
+        loginResponse.setExpiresIn(jwtTokenProvider.getExpirationTime());
+
+        return ResponseEntity.ok(loginResponse);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<User> getCurrentUser(@RequestHeader("Authorization") String token) {
-        User user = userService.getCurrentUser(token.replace("Bearer ", ""));
-        return ResponseEntity.ok(user);
+    public ResponseEntity<UserDto> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+
+        UserDto userDto = new UserDto();
+        userDto.setId(currentUser.getId());
+        userDto.setEmail(currentUser.getEmail());
+        userDto.setName(currentUser.getName());
+        return ResponseEntity.ok(userDto);
     }
 }

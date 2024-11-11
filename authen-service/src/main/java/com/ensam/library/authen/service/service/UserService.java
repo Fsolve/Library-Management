@@ -1,55 +1,53 @@
 package com.ensam.library.authen.service.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.ensam.library.authen.service.model.User;
+import com.ensam.library.authen.service.model.Role;
 import com.ensam.library.authen.service.repository.UserRepository;
-import com.ensam.library.authen.service.security.JwtTokenProvider;
+import com.ensam.library.authen.service.repository.RoleRepository;
+import com.ensam.library.authen.service.dto.LoginRequest;
+import com.ensam.library.authen.service.dto.RegisterRequest;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-@Slf4j
+import java.util.HashSet;
+import java.util.Set;
+
+import lombok.AllArgsConstructor;
+
 
 @Service
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    public UserService(UserRepository userRepository,
-            PasswordEncoder passwordEncoder,
-            JwtTokenProvider jwtTokenProvider) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
 
-    public User register(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Email already exists");
-        }
+    public User register(RegisterRequest registerRequest) {
+        Role userRole = roleRepository.findByName(registerRequest.getRole())
+                .orElseThrow(() -> new RuntimeException("Role not found" + registerRequest.getRole()));
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User user = new User();
+        user.setName(registerRequest.getName());
+        user.setEmail(registerRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setRoles(new HashSet<>(Set.of(userRole)));
         return userRepository.save(user);
     }
 
-    public String login(String email, String password) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        return jwtTokenProvider.createToken(user.getEmail(), user.getRole());
-    }
-
-    public User getCurrentUser(String token) {
-        String email = jwtTokenProvider.getUsername(token);
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public User  login(LoginRequest loginRequest) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getEmail(),
+                        loginRequest.getPassword()
+                )
+        );
+        return userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow();
     }
 }

@@ -9,12 +9,10 @@ import com.ensam.library.authen.service.dto.RegisterRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import lombok.AllArgsConstructor;
 
@@ -29,14 +27,14 @@ public class UserService {
 
 
     public User register(RegisterRequest registerRequest) {
-        Role userRole = roleRepository.findByName(registerRequest.getRole())
-                .orElseThrow(() -> new RuntimeException("Role not found" + registerRequest.getRole()));
-
         User user = new User();
         user.setName(registerRequest.getName());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setRoles(new HashSet<>(Set.of(userRole)));
+
+        Role role = roleRepository.findByName(registerRequest.getRole())
+                .orElseThrow(() -> new RuntimeException("Role not found" + registerRequest.getRole()));
+        user.getRoles().add(role);
         return userRepository.save(user);
     }
 
@@ -47,7 +45,6 @@ public class UserService {
                         loginRequest.getPassword()
                 )
         );
-        return userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow();
+        return userRepository.findByEmail(loginRequest.getEmail());
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 
 import lombok.AllArgsConstructor;
 
+
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class RoleInitializer implements CommandLineRunner{

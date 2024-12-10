@@ -122,7 +122,8 @@ public class LoanService {
         log.info("Processing return for loan {}", loanId);
 
         Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan not found with id: " + loanId));
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan not found with id: " + loanId));
 
         if (loan.isReturned()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Book is already returned");
@@ -200,11 +201,9 @@ public class LoanService {
     // Fallback method for circuit breaker
     public Loan createLoanFallback(Long userId, Long bookId, Exception e) {
         log.error("Fallback: Error creating loan for user {} and book {}: {}", userId, bookId, e.getMessage());
-        throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, 
-            "Service is temporarily unavailable. Please try again later.");
+        throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+                "Service is temporarily unavailable. Please try again later.");
     }
-
-    
 
     public List<Loan> getUserLoans(Long userId) {
         log.info("Retrieving loans for user {}", userId);

@@ -10,9 +10,10 @@ import com.ensam.library.authen.service.service.UserService;
 import com.ensam.library.authen.service.security.JwtTokenProvider;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -50,6 +51,12 @@ public class UserController {
         return ResponseEntity.ok(toUserDto(currentUser));
     }
 
+     @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId));
+        return ResponseEntity.ok(toUserDto(user));
+    }
 
     public UserDto toUserDto(User user){
         UserDto userDto = new UserDto();

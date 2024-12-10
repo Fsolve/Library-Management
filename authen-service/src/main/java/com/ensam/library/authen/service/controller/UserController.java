@@ -53,8 +53,7 @@ public class UserController {
 
      @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId));
+        User user = userRepository.findByIdAlt(userId);
         return ResponseEntity.ok(toUserDto(user));
     }
 

@@ -4,4 +4,5 @@ import com.ensam.library.authen.service.model.User;
 
 public interface CustomUserRepository {
     User findByEmail(String email);
+    User findByIdAlt(Long id);
 }

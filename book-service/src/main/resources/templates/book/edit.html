@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head th:replace="base :: head">
+    <title>Modifier un Livre</title>
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+<!-- Navigation -->
+<div th:replace="base :: nav"></div>
+
+<!-- Contenu principal -->
+<main class="flex-grow container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto">
+        <!-- En-tête du formulaire -->
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="bg-blue-900 px-6 py-4">
+                <h1 class="text-2xl font-semibold text-white">Modifier le livre</h1>
+                <p class="text-blue-100 text-sm mt-1">Modifiez les informations du livre</p>
+            </div>
+
+            <form th:action="@{/books/edit/{id}(id=${book.id})}" method="post" th:object="${book}" class="p-6 space-y-6">
+                <!-- Titre -->
+                <div class="space-y-2">
+                    <label for="title" class="block text-sm font-medium text-gray-700">
+                        Titre du livre
+                    </label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="text" id="title" th:field="*{title}" required
+                               class="block w-full rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="Le titre du livre"/>
+                    </div>
+                </div>
+
+                <!-- Auteur -->
+                <div class="space-y-2">
+                    <label for="author" class="block text-sm font-medium text-gray-700">
+                        Auteur
+                    </label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="text" id="author" th:field="*{author}" required
+                               class="block w-full rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="Nom de l'auteur"/>
+                    </div>
+                </div>
+
+                <!-- ISBN -->
+                <div class="space-y-2">
+                    <label for="isbn" class="block text-sm font-medium text-gray-700">
+                        ISBN
+                    </label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input type="text" id="isbn" th:field="*{isbn}" required
+                               class="block w-full rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="978-XXXXXXXXXX"/>
+                        <p class="mt-1 text-sm text-gray-500">Format ISBN-13 (ex: 978-2070541270)</p>
+                    </div>
+                </div>
+
+                <!-- Disponibilité -->
+                <div class="space-y-2">
+                    <div class="relative flex items-start">
+                        <div class="flex items-center h-5">
+                            <input type="checkbox" id="available" th:field="*{available}"
+                                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"/>
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="available" class="font-medium text-gray-700">Disponible</label>
+                            <p class="text-gray-500">Cochez si le livre est disponible pour l'emprunt</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="pt-6 border-t border-gray-200 flex items-center justify-between">
+                    <a th:href="@{/books}"
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Retour à la liste
+                    </a>
+                    <button type="submit"
+                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Enregistrer les modifications
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<div th:replace="base :: footer"></div>
+
+<!-- Validation Script -->
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const isbn = document.getElementById('isbn').value;
+        const isbnRegex = /^978-\d{10}$/;
+
+        if (!isbnRegex.test(isbn)) {
+            e.preventDefault();
+            alert('Format ISBN invalide. Veuillez utiliser le format 978-XXXXXXXXXX');
+        }
+    });
+</script>
+</body>
+</html>

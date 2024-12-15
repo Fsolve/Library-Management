@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Heroicons pour les icônes -->
     <script src="https://unpkg.com/@heroicons/v2/24/solid"></script>
+
+
 </head>
 <body class="bg-gray-50">
 <!-- Barre de navigation -->
@@ -33,16 +35,16 @@
 
             <!-- Menu principal -->
             <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
-                <a href="http://localhost:8083/users/" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                <a href="/users/" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                     Accueil
                 </a>
-                <a href="/catalogue" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                <a href="#" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                     Catalogue
                 </a>
-                <a href="/emprunts" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                <a href="#" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                     Emprunts
                 </a>
-                <a href="/reservations" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                <a href="#" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                     Réservations
                 </a>
                 <a id="livres" href="#" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
@@ -54,7 +56,7 @@
             <div class="hidden sm:ml-6 sm:flex sm:items-center">
                 <!-- Bouton Se Connecter (visible quand déconnecté) -->
                 <button id="loginButton"
-                        onclick="window.location.href='http://localhost:8083/users/login'"
+                        onclick="window.location.href='/users/login'"
                         class="items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                     <div class="flex items-center space-x-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,7 +71,7 @@
                     <!-- Bouton Mon Compte -->
                     <div class="flex items-center space-x-3">
                         <button type="button"
-                                onclick="window.location.href='http://localhost:8083/users/profile'"
+                                onclick="window.location.href='/users/profile'"
                                 class="bg-blue-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-800 focus:ring-white">
                             <span class="sr-only">Open user menu</span>
                             <div class="h-8 w-8 rounded-full bg-blue-700 flex items-center justify-center text-white">
@@ -145,7 +147,7 @@
 </footer>
 
 <script>
-    // Toggle menu mobile
+    // Script de base qui sera toujours exécuté
     document.querySelector('button[aria-label="Open main menu"]').addEventListener('click', function() {
         const mobileMenu = document.getElementById('mobile-menu');
         mobileMenu.classList.toggle('hidden');
@@ -158,13 +160,13 @@
         // Fonction pour mettre à jour le nom d'utilisateur
         function updateUserName() {
             const userNameElement = document.getElementById('avatarName');
-            const userData = JSON.parse(localStorage.getItem('userData'));
-            if (userData) {
+            const userDataString = localStorage.getItem('user');
+            if (userDataString) {
                 try {
+                    const userData = JSON.parse(userDataString);
                     if (userData && userData.name) {
-                        // Formatage du rôle pour l'affichage
+                        //formatage du role
                         const roleDisplay = userData.role === 'ROLE_ADMIN' ? 'Administrateur' : 'Utilisateur';
-                        //mettre a jour le nom dans navbar
                         userNameElement.textContent = userData.name +" ("+ roleDisplay +")";
                     } else {
                         userNameElement.textContent = 'Mon Compte';
@@ -175,6 +177,28 @@
                 }
             } else {
                 userNameElement.textContent = 'Mon Compte';
+            }
+        }
+
+        // Fonction pour gérer l'affichage des éléments d'authentification
+        function updateAuthenticationUI() {
+            const userMenu = document.getElementById('userMenu');
+            const loginButton = document.getElementById('loginButton');
+            const token = localStorage.getItem('authToken');
+            //afficher les liens en cas d'auth seulment
+            //const actionElements = document.querySelectorAll('.auth-links');
+
+            if (token && token !== 'null' && token !== 'undefined') {
+                // Utilisateur connecté
+                userMenu.style.display = 'flex';
+                loginButton.style.display = 'none';
+                // Mettre à jour le nom d'utilisateur
+                updateUserName();
+            } else {
+                //actionElements.forEach(el => el.style.display = 'none');
+                // Utilisateur déconnecté
+                userMenu.style.display = 'none';
+                loginButton.style.display = 'flex';
             }
         }
         // Fonction pour gérer l'affichage du bouton de déconnexion
@@ -190,37 +214,60 @@
                 logoutButton.style.display = 'none';
             }
         }
-        // Fonction pour gérer l'affichage des éléments d'authentification
-        function updateAuthenticationUI() {
-            const userMenu = document.getElementById('userMenu');
-            const loginButton = document.getElementById('loginButton');
-            const token = localStorage.getItem('authToken');
-
-            if (token && token !== 'null' && token !== 'undefined') {
-                // Utilisateur connecté
-                userMenu.style.display = 'flex';
-                loginButton.style.display = 'none';
-                // Mettre à jour le nom d'utilisateur
-                updateUserName();
-            } else {
-                // Utilisateur déconnecté
-                userMenu.style.display = 'none';
-                loginButton.style.display = 'flex';
-            }
-        }
 
         // Fonction pour gérer la déconnexion
         async function handleLogout() {
-            window.location.href = 'http://localhost:8083/users/logout'
+            try {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userData');
+                window.location.href = '/users/login?logout=success';
+            } catch (error) {
+                console.error('Erreur lors de la déconnexion:', error);
+                window.location.href = '/users/login';
+            }
         }
+
+        // Fonction pour gérer les redirections vers book
+        function handleBookRedirect(path) {
+            const currentUrl = window.location.href;
+            // Construire l'URL avec les paramètres d'auth
+            const redirectUrl = new URL(`http://localhost:8081${path}?callback=${encodeURIComponent(currentUrl)}`);
+            redirectUrl.searchParams.set('auth_success', 'true');
+            redirectUrl.searchParams.set('auth_token', localStorage.getItem('authToken'));
+            // Passer le json sous forme string
+            const rawUserData = JSON.stringify(localStorage.getItem('user'));
+
+            //! we need to parse this later when we want to use its elements
+            redirectUrl.searchParams.set('auth_data', rawUserData);
+
+            // Nettoyer l'URL de retour
+            localStorage.removeItem('bookReturnUrl');
+
+            // Rediriger vers le service book
+            window.location.href = redirectUrl.toString();
+            // window.location.href = `http://localhost:8081${path}?callback=${encodeURIComponent(currentUrl)}`;
+        }
+
+        // bouton valable unique en cas d'auth
+        document.getElementById('livres').onclick = () => {if(localStorage.getItem('authToken')) {handleBookRedirect('/books')} else window.location.href = "/users/login";}
+
 
         // Événements pour le chargement de la page
         document.addEventListener('DOMContentLoaded', () => {
+            updateAuthenticationUI();
             updateLogoutButton();
-            updateUserName();
-            updateAuthenticationUI()
         });
 
+
+        // Observer les changements dans localStorage
+        const originalSetItem = localStorage.setItem;
+        localStorage.setItem = function(key, value) {
+            const event = new Event('storageChange');
+            document.dispatchEvent(event);
+            originalSetItem.apply(this, arguments);
+        };
+
+        document.addEventListener('storageChange', updateLogoutButton);
     </script>
 </th:block>
 </body>

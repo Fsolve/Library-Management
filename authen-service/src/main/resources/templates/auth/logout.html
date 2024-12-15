@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base :: head">
+    <title>Déconnexion - BiblioENSAM</title>
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+<!-- Navigation -->
+<div th:replace="base :: nav"></div>
+
+<!-- Contenu principal -->
+<main class="flex-grow container mx-auto px-4 py-8">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-blue-900 px-6 py-4">
+            <h2 class="text-xl font-semibold text-white text-center">Déconnexion</h2>
+        </div>
+
+        <div class="p-6 text-center">
+            <div class="mb-6">
+                <svg class="mx-auto h-12 w-12 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+            </div>
+            <p class="text-gray-600 mb-4">Déconnexion en cours...</p>
+            <div class="animate-spin mx-auto h-8 w-8 border-4 border-blue-900 rounded-full border-t-transparent"></div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<div th:replace="base :: footer"></div>
+
+<!-- Script de déconnexion -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Suppression des données d'authentification
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('user')
+
+        // Appel à l'API de déconnexion (si nécessaire)
+        fetch('/api/users/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).finally(() => {
+            // Redirection vers la page de connexion après un court délai
+            setTimeout(() => {
+                window.location.href = '/users/login?logout=success';
+            }, 1500);
+        });
+    });
+</script>
+</body>
+</html>

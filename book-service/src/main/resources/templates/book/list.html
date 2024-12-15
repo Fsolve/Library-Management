@@ -17,12 +17,12 @@
                     <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-900 to-blue-600 bg-clip-text text-transparent animate-title">
                         Liste des Livres
                     </h1>
-                    <p class="text-lg text-gray-600 animate-fade-in">
+                    <p class="admin-actions text-lg text-gray-600 animate-fade-in">
                         Gérez votre collection de livres
                         <span class="inline-block animate-bounce ml-2">📚</span>
                     </p>
                 </div>
-                <div>
+                <div class="admin-actions">
                     <a th:href="@{/books/add}"
                        class="group inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105">
                         <svg class="-ml-1 mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -78,7 +78,7 @@
                             <span class="text-xs font-bold text-white uppercase tracking-wider">Statut</span>
                         </div>
                     </th>
-                    <th scope="col" class="px-6 py-4 text-right">
+                    <th scope="col" class="px-6 py-4 text-right action-header">
                         <div class="flex items-center justify-end space-x-2">
                             <svg class="h-4 w-4 text-blue-300" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z"/>
@@ -121,8 +121,9 @@
                             Indisponible
                         </span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td class="admin-actions px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div class="flex items-center justify-end space-x-3">
+
                             <a th:href="@{/books/{id}(id=${book.id})}"
                                class="inline-flex items-center text-blue-900 hover:text-blue-700 transition-colors duration-200">
                                 <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -131,27 +132,30 @@
                                 </svg>
                                 Détails
                             </a>
-                            <a th:href="@{/books/edit/{id}(id=${book.id})}"
-                               class="inline-flex items-center text-yellow-600 hover:text-yellow-500 transition-colors duration-200">
-                                <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
-                                </svg>
-                                Modifier
-                            </a>
-                            <form th:action="@{/books/delete/{id}(id=${book.id})}"
-                                  method="post"
-                                  class="inline-flex"
-                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce livre ?');">
-                                <input type="hidden" name="_method" value="delete"/>
-                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                <button type="submit"
-                                        class="inline-flex items-center text-red-600 hover:text-red-500 transition-colors duration-200">
+                            <!-- Les boutons admin -->
+                            <div class="admin-actions">
+                                <a th:href="@{/books/edit/{id}(id=${book.id})}"
+                                   class="inline-flex items-center text-yellow-600 hover:text-yellow-500 transition-colors duration-200">
                                     <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                                     </svg>
-                                    Supprimer
-                                </button>
-                            </form>
+                                    Modifier
+                                </a>
+                                <form th:action="@{/books/delete/{id}(id=${book.id})}"
+                                      method="post"
+                                      class="inline-flex"
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce livre ?');">
+                                    <input type="hidden" name="_method" value="delete"/>
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                    <button type="submit"
+                                            class="inline-flex items-center text-red-600 hover:text-red-500 transition-colors duration-200">
+                                        <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </td>
                 </tr>
@@ -196,6 +200,82 @@
 <!-- Script pour les animations -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // 1. D'abord vérifier et traiter les paramètres d'authentification
+        checkAuthParameters();
+
+        // 2. Ensuite mettre à jour l'interface selon le rôle
+        updateInterfaceBasedOnRole();
+
+        // 3. Enfin, appliquer les animations
+        initializeAnimations();
+        });
+
+        // Effet de survol sur le titre
+        const title = document.querySelector('h1');
+        title.addEventListener('mouseover', function() {
+            this.style.transform = 'scale(1.02)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+
+        title.addEventListener('mouseout', function() {
+            this.style.transform = 'scale(1)';
+        });
+       // Fonction pour vérifier et traiter les paramètres d'authentification (fonctionne uniquement si on redirection depuis auth-service)
+    function checkAuthParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const authSuccess = urlParams.get('auth_success');
+        if (authSuccess === 'true') {
+            const userParsedData = JSON.parse(urlParams.get('auth_data'));
+            // Récupérer et stocker le token et les données utilisateur
+            const token = urlParams.get('auth_token');
+            if (token && userParsedData) {
+                try {
+                    localStorage.setItem('authToken', token);
+                    //! it must be parsed for later use
+                    localStorage.setItem('userData', userParsedData);
+
+                    // Nettoyer l'URL
+                    const cleanUrl = window.location.pathname;
+                    window.history.replaceState({}, document.title, cleanUrl);
+
+                    // Mettre à jour l'interface utilisateur
+                    // updateAuthenticationUI();
+                    // updateUserName();
+                } catch (error) {
+                    console.error('Erreur lors du traitement des données d\'authentification:', error);
+                }
+            }
+        }
+    }
+
+
+    function isAdmin() {
+        try {
+            const userDataString = localStorage.getItem('userData');
+            if (!userDataString) return false;
+            const userData = JSON.parse(userDataString);
+            return userData.role === 'ROLE_ADMIN';
+        } catch (error) {
+            console.error('Erreur lors de la vérification du rôle:', error);
+            return false;
+        }
+    }
+
+    // Fonction pour mettre à jour l'interface selon le rôle
+    function updateInterfaceBasedOnRole() {
+        const actionElements = document.querySelectorAll('.admin-actions');
+        const actionHeader = document.querySelector('.action-header');
+
+        if (!isAdmin()) {
+            actionElements.forEach(el => el.style.display = 'none');
+            if (actionHeader) actionHeader.style.display = 'none';
+        } else {
+            actionElements.forEach(el => el.style.display = 'block');
+            if (actionHeader) actionHeader.style.display = 'block';
+        }
+    }
+    // Fonction pour initialiser les animations
+    function initializeAnimations() {
         // Animation des lignes du tableau
         const rows = document.querySelectorAll('tbody tr');
         rows.forEach((row, index) => {
@@ -213,7 +293,11 @@
         title.addEventListener('mouseout', function() {
             this.style.transform = 'scale(1)';
         });
-    });
+    }
+
 </script>
+
+<!-- Inclure les scripts de base -->
+<script th:replace="~{base :: scripts}"></script>
 </body>
 </html>

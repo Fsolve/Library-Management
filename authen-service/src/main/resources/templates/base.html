@@ -41,10 +41,10 @@
                 <a href="#" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                     Catalogue
                 </a>
-                <a href="#" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                <a id="emprunt" href="#" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                     Emprunts
                 </a>
-                <a href="#" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                <a id="reservations" href="#" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                     Réservations
                 </a>
                 <a id="livres" href="#" class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
@@ -248,10 +248,42 @@
             // window.location.href = `http://localhost:8081${path}?callback=${encodeURIComponent(currentUrl)}`;
         }
 
+        function handleLoanRedirect(path) {
+    const currentUrl = window.location.href;
+    // Construire l'URL avec les paramètres d'auth
+    const redirectUrl = new URL(`http://localhost:8082${path}?callback=${encodeURIComponent(currentUrl)}`);
+    redirectUrl.searchParams.set('auth_success', 'true');
+    redirectUrl.searchParams.set('auth_token', localStorage.getItem('authToken'));
+    // Passer le json sous forme string
+    const rawUserData = JSON.stringify(localStorage.getItem('user'));
+
+    //! we need to parse this later when we want to use its elements
+    redirectUrl.searchParams.set('auth_data', rawUserData);
+
+    // Nettoyer l'URL de retour
+    localStorage.removeItem('loanReturnUrl');
+
+    // Rediriger vers le service loan
+    window.location.href = redirectUrl.toString();
+}
         // bouton valable unique en cas d'auth
         document.getElementById('livres').onclick = () => {if(localStorage.getItem('authToken')) {handleBookRedirect('/books')} else window.location.href = "/users/login";}
 
+        document.getElementById('emprunt').onclick = () => {
+    if(localStorage.getItem('authToken')) {
+        handleLoanRedirect('/loans/add');
+    } else {
+        window.location.href = "/users/login";
+    }
+};
 
+document.getElementById('reservations').onclick = () => {
+    if(localStorage.getItem('authToken')) {
+        handleLoanRedirect('/loans');
+    } else {
+        window.location.href = "/users/login";
+    }
+};
         // Événements pour le chargement de la page
         document.addEventListener('DOMContentLoaded', () => {
             updateAuthenticationUI();

@@ -53,4 +53,10 @@ public class LoanController {
         List<Loan> loans = loanService.getUserLoans(userId);
         return ResponseEntity.ok(loans);
     }
+
+    @DeleteMapping("/{loanId}")
+    public ResponseEntity<Void> deleteLoan(@PathVariable Long id) {
+        loanService.deleteLoan(id);
+        return ResponseEntity.noContent().build();
+    }
 }

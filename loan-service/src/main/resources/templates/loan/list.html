@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+  <head th:replace="base :: head">
+    <title>Liste des Emprunts</title>
+  </head>
+  <body class="bg-gray-50 flex flex-col min-h-screen">
+    <!-- Navigation -->
+    <div th:replace="base :: nav"></div>
+
+    <!-- Contenu principal -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <!-- En-tête de la page -->
+      <div class="mb-8 bg-white rounded-lg shadow-lg overflow-hidden">
+        <div
+          class="relative p-6 bg-gradient-to-r from-blue-900/5 to-blue-700/5"
+        >
+          <div class="flex justify-between items-center">
+            <div class="space-y-2">
+              <h1
+                class="text-4xl font-bold bg-gradient-to-r from-blue-900 to-blue-600 bg-clip-text text-transparent animate-title"
+              >
+                Liste des Emprunts
+              </h1>
+              <p class="text-lg text-gray-600 animate-fade-in" id="subtitle">
+                Gérez vos emprunts
+                <span class="inline-block animate-bounce ml-2">📚</span>
+              </p>
+            </div>
+            <div class="user-actions" style="display: none">
+              <a
+                th:href="@{/loans/add}"
+                class="group inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105"
+              >
+                <svg
+                  class="-ml-1 mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-90"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Nouvel Emprunt
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table des emprunts -->
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr class="bg-gradient-to-r from-blue-900 to-blue-800">
+                <th scope="col" class="px-6 py-4 text-left">
+                  <div class="flex items-center space-x-2">
+                    <span
+                      class="text-xs font-bold text-white uppercase tracking-wider"
+                      >#</span
+                    >
+                  </div>
+                </th>
+                <th
+                  scope="col"
+                  class="px-6 py-4 text-left admin-column"
+                  style="display: none"
+                >
+                  <div class="flex items-center space-x-2">
+                    <svg
+                      class="h-4 w-4 text-blue-300"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"
+                      />
+                    </svg>
+                    <span
+                      class="text-xs font-bold text-white uppercase tracking-wider"
+                      >Utilisateur</span
+                    >
+                  </div>
+                </th>
+                <th scope="col" class="px-6 py-4 text-left">
+                  <div class="flex items-center space-x-2">
+                    <svg
+                      class="h-4 w-4 text-blue-300"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"
+                      />
+                    </svg>
+                    <span
+                      class="text-xs font-bold text-white uppercase tracking-wider"
+                      >Livre</span
+                    >
+                  </div>
+                </th>
+                <th scope="col" class="px-6 py-4 text-left">
+                  <div class="flex items-center space-x-2">
+                    <svg
+                      class="h-4 w-4 text-blue-300"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span
+                      class="text-xs font-bold text-white uppercase tracking-wider"
+                      >Date d'emprunt</span
+                    >
+                  </div>
+                </th>
+                <th scope="col" class="px-6 py-4 text-left">
+                  <div class="flex items-center space-x-2">
+                    <svg
+                      class="h-4 w-4 text-blue-300"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span
+                      class="text-xs font-bold text-white uppercase tracking-wider"
+                      >Statut</span
+                    >
+                  </div>
+                </th>
+                <th scope="col" class="px-6 py-4 text-right">
+                  <div class="flex items-center justify-end space-x-2">
+                    <svg
+                      class="h-4 w-4 text-blue-300"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z"
+                      />
+                    </svg>
+                    <span
+                      class="text-xs font-bold text-white uppercase tracking-wider"
+                      >Actions</span
+                    >
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr
+                th:each="loan : ${loans}"
+                class="hover:bg-gray-50 transition-all duration-200"
+                th:data-user-id="${loan.userId}"
+              >
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div
+                    class="text-sm font-medium text-gray-900"
+                    th:text="${loan.id}"
+                  ></div>
+                </td>
+                <td class="admin-column px-6 py-4" style="display: none">
+                  <div
+                    class="text-sm text-gray-700"
+                    th:text="${loan.userId}"
+                  ></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div
+                    class="text-sm text-gray-700"
+                    th:text="${loan.bookId}"
+                  ></div>
+                </td>
+                <td class="px-6 py-4">
+                  <div
+                    class="text-sm text-gray-500"
+                    th:text="${#temporals.format(loan.loanDate, 'dd/MM/yyyy')}"
+                  ></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    th:if="${!loan.returned}"
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"
+                  >
+                    <svg
+                      class="h-4 w-4 mr-1.5 text-green-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    En cours
+                  </span>
+                  <span
+                    th:if="${loan.returned}"
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800"
+                  >
+                    <svg
+                      class="h-4 w-4 mr-1.5 text-gray-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    Retourné
+                  </span>
+                </td>
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                >
+                  <div class="flex items-center justify-end space-x-3">
+                    <a
+                      th:href="@{/loans/{id}(id=${loan.id})}"
+                      class="inline-flex items-center text-blue-900 hover:text-blue-700 transition-colors duration-200"
+                    >
+                      <svg
+                        class="h-4 w-4 mr-1"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path
+                          fill-rule="evenodd"
+                          d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      Détails
+                    </a>
+                    <!-- Return button for users -->
+                    <button
+                      th:if="${!loan.returned}"
+                      class="user-actions return-button inline-flex items-center text-green-600 hover:text-green-500 transition-colors duration-200"
+                      th:onclick="'handleLoanReturn(' + ${loan.id} + ')'"
+                      style="display: none"
+                    >
+                      <svg
+                        class="h-4 w-4 mr-1"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      Retourner
+                    </button>
+                    <!-- Delete button for admin -->
+                    <button
+                      class="admin-actions inline-flex items-center text-red-600 hover:text-red-500 transition-colors duration-200"
+                      th:onclick="'handleLoanDelete(' + ${loan.id} + ')'"
+                      style="display: none"
+                    >
+                      <svg
+                        class="h-4 w-4 mr-1"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      Supprimer
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="base :: footer"></div>
+
+    <!-- Styles personnalisés -->
+    <!-- Styles personnalisés -->
+    <style>
+      .animate-title {
+        background-size: 200% auto;
+        animation: titleGradient 5s ease infinite;
+      }
+
+      @keyframes titleGradient {
+        0% {
+          background-position: 0 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0 50%;
+        }
+      }
+
+      .animate-fade-in {
+        animation: fadeIn 0.8s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .hover-scale {
+        transition: transform 0.2s ease;
+      }
+
+      .hover-scale:hover {
+        transform: scale(1.02);
+      }
+    </style>
+
+    <!-- Scripts -->
+    <script th:inline="javascript">
+      document.addEventListener("DOMContentLoaded", function () {
+        // 1. Check and process authentication parameters
+        checkAuthParameters();
+
+        // 2. Update interface based on role
+        updateInterfaceBasedOnRole();
+
+        // 3. Apply animations
+        initializeAnimations();
+      });
+
+      // Function to check and process authentication parameters
+      function checkAuthParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const authSuccess = urlParams.get("auth_success");
+        if (authSuccess === "true") {
+          const userParsedData = JSON.parse(urlParams.get("auth_data"));
+          const token = urlParams.get("auth_token");
+          if (token && userParsedData) {
+            try {
+              localStorage.setItem("authToken", token);
+              localStorage.setItem("userData", userParsedData);
+
+              // Clean URL
+              const cleanUrl = window.location.pathname;
+              window.history.replaceState({}, document.title, cleanUrl);
+            } catch (error) {
+              console.error("Error processing authentication data:", error);
+            }
+          }
+        }
+      }
+
+      function isAdmin() {
+        try {
+          const userData = JSON.parse(localStorage.getItem("userData"));
+          return userData && userData.role === "ROLE_ADMIN";
+        } catch (error) {
+          console.error("Error checking role:", error);
+          return false;
+        }
+      }
+
+      function getCurrentUserId() {
+        try {
+          const userData = JSON.parse(localStorage.getItem("userData"));
+          return userData ? userData.id : null;
+        } catch (error) {
+          console.error("Error getting user ID:", error);
+          return null;
+        }
+      }
+
+      // Function to update interface based on role
+      function updateInterfaceBasedOnRole() {
+        const adminElements = document.querySelectorAll(".admin-actions");
+        const userElements = document.querySelectorAll(".user-actions");
+        const adminColumns = document.querySelectorAll(".admin-column");
+        const subtitle = document.getElementById("subtitle");
+
+        // Get current user data
+        const userData = JSON.parse(localStorage.getItem("userData"));
+        const isAdminUser = userData && userData.role === "ROLE_ADMIN";
+        const userId = userData ? userData.id : null;
+
+        if (isAdminUser) {
+          // Show admin elements
+          adminElements.forEach((el) => (el.style.display = "inline-flex"));
+          adminColumns.forEach((el) => (el.style.display = "table-cell"));
+          userElements.forEach((el) => (el.style.display = "none"));
+          subtitle.textContent = "Gérez tous les emprunts de la bibliothèque";
+        } else if (userId) {
+          // Show user elements and redirect to user-specific loans
+          adminElements.forEach((el) => (el.style.display = "none"));
+          adminColumns.forEach((el) => (el.style.display = "none"));
+          userElements.forEach((el) => (el.style.display = "inline-flex"));
+          subtitle.textContent = "Gérez vos emprunts";
+
+          // Redirect to user-specific loans if not already there
+          const currentPath = window.location.pathname;
+          if (currentPath === "/loans") {
+            window.location.href = `/loans/user/${userId}`;
+          }
+        } else {
+          // No user logged in - redirect to login or show message
+          alert("Veuillez vous connecter pour voir vos emprunts");
+          // Optionally redirect to login page
+          // window.location.href = "/login";
+        }
+      }
+
+      // Function to handle loan return
+      function handleLoanReturn(loanId) {
+        if (confirm("Êtes-vous sûr de vouloir retourner ce livre ?")) {
+          const token = localStorage.getItem("authToken");
+          fetch(`/api/loans/return/${loanId}`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => {
+              if (response.ok) {
+                window.location.reload();
+              } else {
+                throw new Error("Failed to return loan");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("Une erreur est survenue lors du retour du livre");
+            });
+        }
+      }
+      
+      // Function to handle loan deletion (admin only)
+      function handleLoanDelete(loanId) {
+        if (confirm("Êtes-vous sûr de vouloir supprimer cet emprunt ?")) {
+          const token = localStorage.getItem("authToken");
+          fetch(`/api/loans/${loanId}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+            .then((response) => {
+              if (response.ok) {
+                window.location.reload();
+              } else {
+                throw new Error("Failed to delete loan");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("Une erreur est survenue lors de la suppression");
+            });
+        }
+      }
+      // function fetchLoans() {
+      //   const token = localStorage.getItem("authToken");
+      //   const headers = {
+      //     Authorization: `Bearer ${token}`,
+      //     "Content-Type": "application/json",
+      //   };
+
+      //   fetch("/api/loans", {
+      //     headers: headers,
+      //   })
+      //     .then((response) => response.json())
+      //     .then((data) => {
+      //       updateLoansTable(data);
+      //     })
+      //     .catch((error) => console.error("Error:", error));
+      // }
+
+      // Update the loans table in the tbody
+      function updateLoansTable(loans) {
+        const tbody = document.querySelector("tbody");
+        tbody.innerHTML = ""; // Clear existing rows
+
+        loans.forEach((loan) => {
+          const row = createLoanRow(loan);
+          tbody.appendChild(row);
+        });
+      }
+
+      // Function to initialize animations
+      function initializeAnimations() {
+        // Table rows animationf
+        const rows = document.querySelectorAll("tbody tr");
+        rows.forEach((row, index) => {
+          row.style.opacity = "0";
+          row.style.animation = `fadeIn 0.3s ease-out ${index * 0.1}s forwards`;
+        });
+
+        // Title hover effect
+        const title = document.querySelector("h1");
+        title.addEventListener("mouseover", function () {
+          this.style.transform = "scale(1.02)";
+          this.style.transition = "transform 0.3s ease";
+        });
+
+        title.addEventListener("mouseout", function () {
+          this.style.transform = "scale(1)";
+        });
+      }
+
+      // Function to handle redirects
+      //   function handleLoanRedirect(path) {
+      //     const currentUrl = window.location.href;
+      //     const redirectUrl = new URL(`http://localhost:8082${path}`);
+      //     redirectUrl.searchParams.set(
+      //       "auth_token",
+      //       localStorage.getItem("authToken")
+      //     );
+      //     redirectUrl.searchParams.set(
+      //       "auth_data",
+      //       localStorage.getItem("userData")
+      //     );
+      //     redirectUrl.searchParams.set("callback", currentUrl);
+      //     window.location.href = redirectUrl.toString();
+      //   }
+    </script>
+
+    <!-- Include base scripts -->
+    <script th:replace="~{base :: scripts}"></script>
+  </body>
+</html>

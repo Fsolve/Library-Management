@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+  <head th:replace="base :: head">
+    <title>BiblioENSAM - Nouvel Emprunt</title>
+  </head>
+  <body class="bg-gray-50 flex flex-col min-h-screen">
+    <!-- Navigation -->
+    <div th:replace="base :: nav"></div>
+
+    <!-- Contenu principal -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <!-- En-tête de la page -->
+      <div class="mb-8 bg-white rounded-lg shadow-lg overflow-hidden">
+        <div
+          class="relative p-6 bg-gradient-to-r from-blue-900/5 to-blue-700/5"
+        >
+          <div class="flex justify-between items-center">
+            <div class="space-y-2">
+              <h1
+                class="text-4xl font-bold bg-gradient-to-r from-blue-900 to-blue-600 bg-clip-text text-transparent animate-title"
+              >
+                Emprunter un Livre
+              </h1>
+              <p class="text-lg text-gray-600 animate-fade-in">
+                Sélectionnez un livre à emprunter
+                <span class="inline-block animate-bounce ml-2">📚</span>
+              </p>
+            </div>
+            <a
+              href="/loans"
+              class="group inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300"
+            >
+              <svg
+                class="mr-2 h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+              Retour aux emprunts
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Liste des livres -->
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr class="bg-gradient-to-r from-blue-900 to-blue-800">
+                <th
+                  class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider"
+                >
+                  #
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider"
+                >
+                  Titre
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider"
+                >
+                  Auteur
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider"
+                >
+                  Statut
+                </th>
+                <th
+                  class="px-6 py-4 text-right text-xs font-bold text-white uppercase tracking-wider"
+                >
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr
+                th:each="book : ${availableBooks}"
+                class="hover:bg-gray-50 transition-all duration-200"
+              >
+                <td
+                  class="px-6 py-4 whitespace-nowrap"
+                  th:text="${book.id}"
+                ></td>
+                <td class="px-6 py-4" th:text="${book.title}"></td>
+                <td class="px-6 py-4" th:text="${book.author}"></td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    th:if="${book.available}"
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"
+                  >
+                    Disponible
+                  </span>
+                  <span
+                    th:unless="${book.available}"
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800"
+                  >
+                    Indisponible
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <button
+                    th:if="${book.available}"
+                    th:attr="onclick=|openModal(${book.id})|"
+                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Emprunter
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal -->
+    <div
+      id="loanModal"
+      class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center"
+    >
+      <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+        <h2 class="text-lg font-bold mb-4">Créer un nouvel emprunt</h2>
+        <form id="loanForm">
+          <div class="mb-4">
+            <label for="userId" class="block text-sm font-medium text-gray-700"
+              >ID Utilisateur</label
+            >
+            <input
+              type="text"
+              id="userId"
+              name="userId"
+              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+            />
+          </div>
+          <div class="mb-4">
+            <label for="bookId" class="block text-sm font-medium text-gray-700"
+              >ID Livre</label
+            >
+            <input
+              type="text"
+              id="bookId"
+              name="bookId"
+              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+              readonly
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              for="loanDate"
+              class="block text-sm font-medium text-gray-700"
+              >Date d'Emprunt</label
+            >
+            <input
+              type="datetime-local"
+              id="loanDate"
+              name="loanDate"
+              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              for="returnDate"
+              class="block text-sm font-medium text-gray-700"
+              >Date de Retour (Optionnel)</label
+            >
+            <input
+              type="datetime-local"
+              id="returnDate"
+              name="returnDate"
+              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+            />
+          </div>
+          <div class="mb-4 flex items-center">
+            <input type="checkbox" id="returned" name="returned" class="mr-2" />
+            <label for="returned" class="text-sm font-medium text-gray-700"
+              >Retourne</label
+            >
+          </div>
+          <div class="flex justify-end space-x-4">
+            <button
+              type="button"
+              onclick="closeModal()"
+              class="px-4 py-2 bg-gray-500 text-white rounded-lg"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 bg-blue-600 text-white rounded-lg"
+            >
+              Confirmer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div th:replace="base :: footer"></div>
+
+    <!-- Scripts -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeAnimations();
+      });
+
+      function getCurrentUserId() {
+        try {
+          const userData = JSON.parse(localStorage.getItem("userData"));
+          return userData ? userData.id : null;
+        } catch (error) {
+          console.error("Error getting user ID:", error);
+          return null;
+        }
+      }
+
+      function initializeAnimations() {
+        const rows = document.querySelectorAll("tbody tr");
+        rows.forEach((row, index) => {
+          row.style.opacity = "0";
+          row.style.animation = `fadeIn 0.3s ease-out ${index * 0.1}s forwards`;
+        });
+      }
+      function openModal(bookId) {
+        document.getElementById("bookId").value = bookId;
+        document.getElementById("loanModal").classList.remove("hidden");
+      }
+
+      function closeModal() {
+        document.getElementById("loanModal").classList.add("hidden");
+      }
+
+      document
+        .getElementById("loanForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const userId = document.getElementById("userId").value;
+          const bookId = document.getElementById("bookId").value;
+          const loanDate = document.getElementById("loanDate").value;
+          const returnDate = document.getElementById("returnDate").value;
+          const returned = document.getElementById("returned").checked;
+          const token = localStorage.getItem("authToken");
+
+          if (!token) {
+            alert("Session expirée. Veuillez vous reconnecter.");
+            return;
+          }
+
+          fetch("/loans", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              userId,
+              bookId,
+              loanDate,
+              returnDate,
+              returned,
+            }),
+          })
+            .then((response) => {
+              if (response.ok) {
+                closeModal();
+                window.location.href = "/loans";
+              } else {
+                throw new Error("Erreur lors de la création de l'emprunt");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("Une erreur est survenue lors de la création de l'emprunt");
+            });
+        });
+    </script>
+
+    <!-- Styles -->
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-title {
+        animation: titleGradient 5s ease infinite;
+        background-size: 200% auto;
+      }
+
+      @keyframes titleGradient {
+        0% {
+          background-position: 0 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0 50%;
+        }
+      }
+    </style>
+    <script th:replace="~{base :: scripts}"></script>
+  </body>
+</html>

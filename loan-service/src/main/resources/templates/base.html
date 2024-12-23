@@ -5,18 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BiblioENSAM - Gestion de Bibliothèque</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Heroicons pour les icônes -->
     <script src="https://unpkg.com/@heroicons/v2/24/solid"></script>
   </head>
   <body class="bg-gray-50">
-    <!-- Barre de navigation -->
     <nav class="bg-blue-900 shadow-lg">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
           <!-- Logo et Nom -->
           <div class="flex">
             <div class="flex-shrink-0 flex items-center">
-              <!-- Logo stylisé -->
               <div
                 class="w-10 h-10 bg-white rounded-lg flex items-center justify-center"
               >
@@ -34,7 +31,6 @@
                   />
                 </svg>
               </div>
-              <!-- Nom du système -->
               <div class="ml-3">
                 <span class="text-white text-xl font-serif tracking-wide"
                   >BiblioENSAM</span
@@ -55,7 +51,7 @@
               Accueil
             </a>
             <a
-              href="/catalogue"
+              href="#"
               class="text-blue-100 hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
             >
               Catalogue
@@ -231,7 +227,6 @@
 
     <!-- Contenu principal -->
     <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-      <!-- Ici sera injecté le contenu spécifique à chaque page -->
       <div th:fragment="content">
         <!-- Le contenu sera remplacé par les autres templates -->
       </div>
@@ -249,17 +244,7 @@
       </div>
     </footer>
 
-    <script>
-      // Toggle menu mobile
-      document
-        .querySelector('button[aria-label="Open main menu"]')
-        .addEventListener("click", function () {
-          const mobileMenu = document.getElementById("mobile-menu");
-          mobileMenu.classList.toggle("hidden");
-        });
-    </script>
-
-    <!-- Bloc pour les scripts additionnels -->
+    <!-- Scripts -->
     <th:block th:fragment="scripts">
       <script>
         // Fonction pour mettre à jour le nom d'utilisateur
@@ -322,17 +307,11 @@
             loginButton.style.display = "flex";
           }
         }
-
-        // Fonction pour gérer la déconnexion
-        async function handleLogout() {
-          window.location.href = "http://localhost:8083/users/logout";
-        }
-
-        function handleLoanRedirect(path) {
+        function handleBookRedirect(path) {
           const currentUrl = window.location.href;
           // Construire l'URL avec les paramètres d'auth
           const redirectUrl = new URL(
-            `http://localhost:8082${path}?callback=${encodeURIComponent(
+            `http://localhost:8081${path}?callback=${encodeURIComponent(
               currentUrl
             )}`
           );
@@ -348,36 +327,24 @@
           redirectUrl.searchParams.set("auth_data", rawUserData);
 
           // Nettoyer l'URL de retour
-          localStorage.removeItem("loanReturnUrl");
+          localStorage.removeItem("bookReturnUrl");
 
-          // Rediriger vers le service loan
+          // Rediriger vers le service book
           window.location.href = redirectUrl.toString();
+          // window.location.href = `http://localhost:8081${path}?callback=${encodeURIComponent(currentUrl)}`;
         }
+
         // bouton valable unique en cas d'auth
-
-        document.getElementById("emprunt").onclick = () => {
+        document.getElementById("livres").onclick = () => {
           if (localStorage.getItem("authToken")) {
-            handleLoanRedirect("/loans/add");
-          } else {
-            window.location.href = "/users/login";
-          }
+            handleBookRedirect("/books");
+          } else window.location.href = "/users/login";
         };
 
-        document.getElementById("reservations").onclick = () => {
-          if (localStorage.getItem("authToken")) {
-            handleLoanRedirect("/loans");
-          } else {
-            window.location.href = "/users/login";
-          }
-        };
-
-        // Observer les changements dans localStorage
-        const originalSetItem = localStorage.setItem;
-        localStorage.setItem = function (key, value) {
-          const event = new Event("storageChange");
-          document.dispatchEvent(event);
-          originalSetItem.apply(this, arguments);
-        };
+        // Fonction pour gérer la déconnexion
+        async function handleLogout() {
+          window.location.href = "http://localhost:8083/users/logout";
+        }
 
         // Événements pour le chargement de la page
         document.addEventListener("DOMContentLoaded", () => {
